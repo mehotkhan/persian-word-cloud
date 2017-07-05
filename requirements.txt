@@ -1,0 +1,3 @@
+arabic_reshaper
+python-bidi
+wordcloud

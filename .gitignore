@@ -1,0 +1,6 @@
+__pycache__/
+*.py[cod]
+*$py.class
+.idea/
+/dist/
+/persian_wordcloud.egg-info/
