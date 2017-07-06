@@ -8,7 +8,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='persian_wordcloud',
-    version='1.0.3',
+    version='1.1.0',
     description='Persian Word Cloud Generator',
     long_description='Persian Word Cloud Generator',
     url='https://github.com/Mehotkhan/persian-word-cloud',

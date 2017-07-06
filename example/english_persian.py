@@ -7,22 +7,25 @@ Generating a square wordcloud from the US constitution using default arguments.
 """
 from os import path
 from persian_wordcloud.wordcloud import STOPWORDS, PersianWordCloud
+from wordcloud import STOPWORDS as EN_STOPWORDS
 
 d = path.dirname(__file__)
 
-text = open(path.join(d, 'persian.txt'), encoding='utf-8').read()
+text_fa = open(path.join(d, 'persian.txt'), encoding='utf-8').read()
+text_en = open(path.join(d, 'english.txt'), encoding='utf-8').read()
 
+text = text_en + text_fa
 # Add another stopword
 
-STOPWORDS.add('اینکه')
-stopwords = set(STOPWORDS)
+# STOPWORDS.add('اینکه')
+STOPWORDS |= EN_STOPWORDS
 
 # Generate a word cloud image
 
 wordcloud = PersianWordCloud(
     only_persian=True,
     max_words=100,
-    stopwords=stopwords,
+    stopwords=STOPWORDS,
     margin=0,
     width=800,
     height=800,
@@ -33,4 +36,4 @@ wordcloud = PersianWordCloud(
 
 image = wordcloud.to_image()
 image.show()
-image.save('result.png')
+image.save('en-fa-result.png')

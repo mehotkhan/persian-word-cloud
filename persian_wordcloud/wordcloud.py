@@ -6,6 +6,9 @@
 # License: MIT
 
 from __future__ import division
+
+import re
+
 from arabic_reshaper import arabic_reshaper
 from bidi.algorithm import get_display
 import warnings
@@ -18,7 +21,7 @@ from wordcloud.wordcloud import colormap_color_func
 
 
 class PersianWordCloud(WordCloud):
-    def __init__(self, font_path=None, width=400, height=200, margin=2,
+    def __init__(self, font_path=None, only_persian=False, width=400, height=200, margin=2,
                  ranks_only=None, prefer_horizontal=.9, mask=None, scale=1,
                  color_func=None, max_words=200, min_font_size=4,
                  stopwords=None, random_state=None, background_color='black',
@@ -42,6 +45,7 @@ class PersianWordCloud(WordCloud):
                 colormap = "hsv"
             else:
                 colormap = "viridis"
+        self.only_persian = only_persian
         self.colormap = colormap
         self.collocations = collocations
         self.font_path = font_path
@@ -74,17 +78,35 @@ class PersianWordCloud(WordCloud):
         self.normalize_plurals = normalize_plurals
 
     def generate(self, text):
+        if self.only_persian:
+            text = self.remove_ar(text)
+
         text_ = arabic_reshaper.reshape(text)
         bidi_text = get_display(text_)
 
         return self.generate_from_text(bidi_text)
+
+    @staticmethod
+    def remove_ar(text):
+        dic = {
+            'ك': 'ک',
+            'دِ': 'د',
+            'بِ': 'ب',
+            'زِ': 'ز',
+            'ذِ': 'ذ',
+            'شِ': 'ش',
+            'سِ': 'س',
+            'ى': 'ی',
+            'ي': 'ی'
+        }
+        pattern = "|".join(map(re.escape, dic.keys()))
+        return re.sub(pattern, lambda m: dic[m.group()], text)
 
 
 item1 = itemgetter(1)
 
 FONT_PATH = os.environ.get("FONT_PATH", os.path.join(os.path.dirname(__file__),
                                                      "fonts/Vazir-Light.ttf"))
-
 
 STOPWORDS = set([get_display(arabic_reshaper.reshape(x.strip())) for x in
                  open((os.path.join(os.path.dirname(__file__), 'stopwords')), encoding='utf-8').read().split('\n')])
