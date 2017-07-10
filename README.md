@@ -7,6 +7,9 @@
 * tested on python 3
 # Sample Output:
 ![Sample Result](example/result.png?raw=true)
-# Todo
-* add function to detect persian and english character 
-* add text cleaner for remove arabic characters in text 
+
+# English + persian  Output:
+![Sample Result](example/en-fa-result.png?raw=true)
+
+# twitter mask  Output:
+![Sample Result](example/twitter_mask.png?raw=true)
