@@ -77,13 +77,6 @@ class PersianWordCloud(WordCloud):
                           DeprecationWarning)
         self.normalize_plurals = normalize_plurals
 
-    # def generate(self, text):
-    #     # print(type(text))
-    #     if self.only_persian:
-    #         text = self.remove_ar(text)
-    #     # print(type(text))
-    #     # exit()
-    #     return text
 
     def process_text(self, text):
 
