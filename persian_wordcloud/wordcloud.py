@@ -6,6 +6,8 @@
 # License: MIT
 
 from __future__ import division
+import re
+import sys
 from arabic_reshaper import arabic_reshaper
 from bidi.algorithm import get_display
 import warnings
@@ -14,11 +16,12 @@ import os
 from operator import itemgetter
 
 from wordcloud import WordCloud
+from wordcloud.tokenization import unigrams_and_bigrams, process_tokens
 from wordcloud.wordcloud import colormap_color_func
 
 
 class PersianWordCloud(WordCloud):
-    def __init__(self, font_path=None, width=400, height=200, margin=2,
+    def __init__(self, font_path=None, only_persian=False, width=400, height=200, margin=2,
                  ranks_only=None, prefer_horizontal=.9, mask=None, scale=1,
                  color_func=None, max_words=200, min_font_size=4,
                  stopwords=None, random_state=None, background_color='black',
@@ -42,6 +45,7 @@ class PersianWordCloud(WordCloud):
                 colormap = "hsv"
             else:
                 colormap = "viridis"
+        self.only_persian = only_persian
         self.colormap = colormap
         self.collocations = collocations
         self.font_path = font_path
@@ -73,11 +77,87 @@ class PersianWordCloud(WordCloud):
                           DeprecationWarning)
         self.normalize_plurals = normalize_plurals
 
-    def generate(self, text):
-        text_ = arabic_reshaper.reshape(text)
-        bidi_text = get_display(text_)
+    # def generate(self, text):
+    #     # print(type(text))
+    #     if self.only_persian:
+    #         text = self.remove_ar(text)
+    #     # print(type(text))
+    #     # exit()
+    #     return text
 
-        return self.generate_from_text(bidi_text)
+    def process_text(self, text):
+
+        """Splits a long text into words, eliminates the stopwords.
+
+        Parameters
+        ----------
+        text : string
+            The text to be processed.
+
+        Returns
+        -------
+        words : dict (string, int)
+            Word tokens with associated frequency.
+
+        ..versionchanged:: 1.2.2
+            Changed return type from list of tuples to dict.
+
+        Notes
+        -----
+        There are better ways to do word tokenization, but I don't want to
+        include all those things.
+        """
+
+        stopwords = set([i.lower() for i in self.stopwords])
+
+        flags = (re.UNICODE if sys.version < '3' and type(text) is unicode
+                 else 0)
+        regexp = self.regexp if self.regexp is not None else r"\w[\w']+"
+
+        words = re.findall(regexp, text, flags)
+        # remove stopwords
+        words = [word for word in words if word.lower() not in stopwords]
+        # remove 's
+        words = [word[:-2] if word.lower().endswith("'s") else word
+                 for word in words]
+        # remove numbers
+        words = [word for word in words if not word.isdigit()]
+        # remove arabic characters
+        if self.only_persian:
+            words = [self.remove_ar(word) for word in words]
+
+        # reshape words
+        words = [self.reshaper(word) for word in words]
+        # reversed list
+        words = words[::-1]
+
+        if self.collocations:
+            word_counts = unigrams_and_bigrams(words, self.normalize_plurals)
+        else:
+            word_counts, _ = process_tokens(words, self.normalize_plurals)
+
+        return word_counts
+
+    @staticmethod
+    def reshaper(word):
+        word = arabic_reshaper.reshape(word)
+        return get_display(word)
+
+    @staticmethod
+    def remove_ar(text):
+        dic = {
+            'ك': 'ک',
+            'دِ': 'د',
+            'بِ': 'ب',
+            'زِ': 'ز',
+            'ذِ': 'ذ',
+            'شِ': 'ش',
+            'سِ': 'س',
+            'ى': 'ی',
+            'ي': 'ی'
+        }
+        pattern = "|".join(map(re.escape, dic.keys()))
+        return re.sub(pattern, lambda m: dic[m.group()], text)
 
 
 item1 = itemgetter(1)
@@ -85,6 +165,5 @@ item1 = itemgetter(1)
 FONT_PATH = os.environ.get("FONT_PATH", os.path.join(os.path.dirname(__file__),
                                                      "fonts/Vazir-Light.ttf"))
 
-
-STOPWORDS = set([get_display(arabic_reshaper.reshape(x.strip())) for x in
+STOPWORDS = set([x.strip() for x in
                  open((os.path.join(os.path.dirname(__file__), 'stopwords')), encoding='utf-8').read().split('\n')])
