@@ -118,11 +118,6 @@ class PersianWordCloud(WordCloud):
         if self.only_persian:
             words = [self.remove_ar(word) for word in words]
 
-        # reshape words
-        # words = [self.reshaper(word) for word in words]
-        # reversed list
-        words = words[::-1]
-
         if self.collocations:
             word_counts = unigrams_and_bigrams(words, self.normalize_plurals)
         else:
