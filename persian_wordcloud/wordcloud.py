@@ -77,7 +77,6 @@ class PersianWordCloud(WordCloud):
                           DeprecationWarning)
         self.normalize_plurals = normalize_plurals
 
-
     def process_text(self, text):
 
         """Splits a long text into words, eliminates the stopwords.
@@ -120,7 +119,7 @@ class PersianWordCloud(WordCloud):
             words = [self.remove_ar(word) for word in words]
 
         # reshape words
-        words = [self.reshaper(word) for word in words]
+        # words = [self.reshaper(word) for word in words]
         # reversed list
         words = words[::-1]
 
@@ -131,10 +130,24 @@ class PersianWordCloud(WordCloud):
 
         return word_counts
 
-    @staticmethod
-    def reshaper(word):
-        word = arabic_reshaper.reshape(word)
-        return get_display(word)
+    def generate(self, text):
+        """Generate wordcloud from text.
+
+        The input "text" is expected to be a natural text. If you pass a sorted
+        list of words, words will appear in your output twice. To remove this
+        duplication, set ``collocations=False``.
+
+        Alias to generate_from_text.
+
+        Calls process_text and generate_from_frequencies.
+
+        Returns
+        -------
+        self
+        """
+        # reshape persian words
+        text = get_display(arabic_reshaper.reshape(text))
+        return self.generate_from_text(text)
 
     @staticmethod
     def remove_ar(text):
@@ -157,6 +170,13 @@ item1 = itemgetter(1)
 
 FONT_PATH = os.environ.get("FONT_PATH", os.path.join(os.path.dirname(__file__),
                                                      "fonts/Vazir-Light.ttf"))
+stop_words_reshape = get_display(arabic_reshaper.reshape(open(
+    (os.path.join(os.path.dirname(__file__), 'stopwords')), encoding='utf-8').read()))
+STOPWORDS = set([x.strip() for x in stop_words_reshape.split('\n')])
 
-STOPWORDS = set([x.strip() for x in
-                 open((os.path.join(os.path.dirname(__file__), 'stopwords')), encoding='utf-8').read().split('\n')])
+
+def add_stop_words(words):
+    for word in words:
+        words_reshape = get_display(arabic_reshaper.reshape(word))
+        STOPWORDS.add(words_reshape)
+        return STOPWORDS
