@@ -6,19 +6,18 @@ Minimal Example
 Generating a square wordcloud from the US constitution using default arguments.
 """
 from os import path
-from persian_wordcloud.wordcloud import STOPWORDS, PersianWordCloud
+
+from persian_wordcloud.wordcloud import PersianWordCloud, add_stop_words
 
 d = path.dirname(__file__)
 
 text = open(path.join(d, 'persian.txt'), encoding='utf-8').read()
 
 # Add another stopword
-
-STOPWORDS.add('می')
-stopwords = set(STOPWORDS)
+stopwords = add_stop_words(['کاسپین'])
+# add_stop_words
 
 # Generate a word cloud image
-
 wordcloud = PersianWordCloud(
     only_persian=True,
     max_words=100,
