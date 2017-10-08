@@ -174,4 +174,4 @@ def add_stop_words(words):
     for word in words:
         words_reshape = get_display(arabic_reshaper.reshape(word))
         STOPWORDS.add(words_reshape)
-        return STOPWORDS
+    return STOPWORDS
