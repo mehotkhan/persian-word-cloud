@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #!/usr/bin/env python
 """
 Minimal Example
@@ -7,7 +8,7 @@ Generating a square wordcloud from the US constitution using default arguments.
 """
 from os import path
 
-from persian_wordcloud.wordcloud import PersianWordCloud, add_stop_words
+from persian_wordcloud import PersianWordCloud, add_stop_words
 
 d = path.dirname(__file__)
 

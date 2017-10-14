@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #!/usr/bin/env python
 """
 With mask Example
@@ -5,7 +6,7 @@ With mask Example
 
 Generating a square wordcloud from the US constitution using default arguments.
 """
-from persian_wordcloud.wordcloud import STOPWORDS, PersianWordCloud
+from persian_wordcloud import STOPWORDS, PersianWordCloud
 
 from os import path
 from PIL import Image
