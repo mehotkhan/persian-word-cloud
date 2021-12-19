@@ -119,7 +119,7 @@ class PersianWordCloud(WordCloud):
             words = [self.remove_ar(word) for word in words]
 
         if self.collocations:
-            word_counts = unigrams_and_bigrams(words, self.normalize_plurals)
+            word_counts = unigrams_and_bigrams(words, self.stopwords, self.normalize_plurals)
         else:
             word_counts, _ = process_tokens(words, self.normalize_plurals)
 
