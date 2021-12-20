@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Author: Andreas Christian Mueller <t3kcit@gmail.com>
 #
 # (c) 2012
@@ -8,6 +9,7 @@
 from __future__ import division
 import re
 import sys
+import codecs
 from arabic_reshaper import arabic_reshaper
 from bidi.algorithm import get_display
 import warnings
@@ -165,7 +167,7 @@ item1 = itemgetter(1)
 
 FONT_PATH = os.environ.get("FONT_PATH", os.path.join(os.path.dirname(__file__),
                                                      "fonts/Vazir-Light.ttf"))
-stop_words_reshape = get_display(arabic_reshaper.reshape(open(
+stop_words_reshape = get_display(arabic_reshaper.reshape(codecs.open(
     (os.path.join(os.path.dirname(__file__), 'stopwords')), encoding='utf-8').read()))
 STOPWORDS = set([x.strip() for x in stop_words_reshape.split('\n')])
 
